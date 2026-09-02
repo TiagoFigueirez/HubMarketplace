@@ -46,6 +46,10 @@ namespace HubMarketplace.api.Services.ApiExternalService
             }
         }
 
+        public Task<ApiExternalResult<T>> PostAsync<T>(string url, Dictionary<string, string>? headers = null)
+        {
+            throw new NotImplementedException();
+        }
         private static StringContent BuildContent<T>(T corpo)
         {
             var json = JsonSerializer.Serialize(corpo, JsonOptions);
@@ -60,6 +64,5 @@ namespace HubMarketplace.api.Services.ApiExternalService
             foreach(var (chave, valor) in headers)
                 request.Headers.TryAddWithoutValidation(chave, valor);
         }
-
     }
 }

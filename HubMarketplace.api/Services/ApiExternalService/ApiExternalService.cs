@@ -46,7 +46,7 @@ namespace HubMarketplace.api.Services.ApiExternalService
             }
         }
 
-        public Task<ApiExternalResult<T>> PostAsync<T>(string url, Dictionary<string, string>? headers = null)
+        Task<ApiExternalResult<TResponse>> PostAsync<TRequest, TResponse>(string url, TRequest Body, Dictionary<string, string>? headers = null)
         {
             throw new NotImplementedException();
         }

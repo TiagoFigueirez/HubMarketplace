@@ -46,13 +46,20 @@ namespace HubMarketplace.api.Services.ApiExternalService
             }
         }
 
-        Task<ApiExternalResult<TResponse>> PostAsync<TRequest, TResponse>(string url, TRequest Body, Dictionary<string, string>? headers = null)
+        public async Task<ApiExternalResult<TResponse>> PostAsync<TRequest, TResponse>
+            (string url, TRequest Body, Dictionary<string, string>? headers = null)
         {
-            throw new NotImplementedException();
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = BuildContent(Body)
+            };
+            ApliccationHeaders(request, headers);
+
+            return await EnviarAsync<TResponse>(request);
         }
-        private static StringContent BuildContent<T>(T corpo)
+        private static StringContent BuildContent<T>(T body)
         {
-            var json = JsonSerializer.Serialize(corpo, JsonOptions);
+            var json = JsonSerializer.Serialize(body, JsonOptions);
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
 

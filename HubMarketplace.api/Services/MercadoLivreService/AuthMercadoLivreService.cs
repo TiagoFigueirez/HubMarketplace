@@ -7,6 +7,7 @@ namespace HubMarketplace.api.Services.MercadoLivreService
     public class AuthMercadoLivreService : IAuthMercadoLivreService
     {
         private readonly IApiExternalService? _apiExternalService;
+        private readonly IConfiguration _configuration;
 
         public AuthMercadoLivreService(IApiExternalService? apiExternalService)
         {
@@ -15,7 +16,7 @@ namespace HubMarketplace.api.Services.MercadoLivreService
 
         public Task<MercadoLivreConfig> ExchangForTokenAsync(string code)
         {
-            var cliente = 
+            var cliente = _apiExternalService.PostAsync();
             throw new NotImplementedException();
         }
     }

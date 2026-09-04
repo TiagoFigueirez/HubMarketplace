@@ -7,13 +7,13 @@ namespace HubMarketplace.api.Services.ApiExternalService
 {
     public class ApiExternalService : IApiExternalService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClient;
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };
 
-        public ApiExternalService(HttpClient httpClient)
+        public ApiExternalService(IHttpClientFactory httpClient)
         {
             _httpClient = httpClient;
         }
@@ -26,14 +26,29 @@ namespace HubMarketplace.api.Services.ApiExternalService
             return await EnviarAsync<T>(request);
         }
 
+        public async Task<ApiExternalResult<TResponse>> PostAsync<TRequest, TResponse>
+            (string url, TRequest Body, Dictionary<string, string>? headers = null)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = BuildContent(Body)
+            };
+
+            ApliccationHeaders(request, headers);
+
+            return await EnviarAsync<TResponse>(request);
+        }
+
         private async Task<ApiExternalResult<T>> EnviarAsync<T>(HttpRequestMessage request)
         {
             try
             {
-                using var response = await _httpClient.SendAsync(request);
+                var client = _httpClient.CreateClient("ApiExternal");
+
+                using var response = await client.SendAsync(request);
                 var content = await response.Content.ReadAsStringAsync();
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                     return ApiExternalResult<T>.Falha(content, (int)response.StatusCode);
 
                 var data = JsonSerializer.Deserialize<T>(content, JsonOptions);
@@ -46,17 +61,6 @@ namespace HubMarketplace.api.Services.ApiExternalService
             }
         }
 
-        public async Task<ApiExternalResult<TResponse>> PostAsync<TRequest, TResponse>
-            (string url, TRequest Body, Dictionary<string, string>? headers = null)
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Post, url)
-            {
-                Content = BuildContent(Body)
-            };
-            ApliccationHeaders(request, headers);
-
-            return await EnviarAsync<TResponse>(request);
-        }
         private static StringContent BuildContent<T>(T body)
         {
             var json = JsonSerializer.Serialize(body, JsonOptions);

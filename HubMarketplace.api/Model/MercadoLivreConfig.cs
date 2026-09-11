@@ -11,7 +11,7 @@ namespace HubMarketplace.api.Model
         [JsonPropertyName("client_secret")]
         public string? ClientSecret { get; set; }
         [JsonPropertyName("code")]
-        public int Code {get; set; }
+        public string? Code {get; set; }
         [JsonPropertyName("redirect_uri")]
         public string? RedirectUri { get; set; }
     }
